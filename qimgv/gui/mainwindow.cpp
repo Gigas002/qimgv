@@ -920,15 +920,15 @@ void MW::readSettings() {
 void MW::applyWindowedBackground() {
 #ifdef USE_KDE_BLUR
     if(settings->backgroundOpacity() == 1.0)
-        KWindowEffects::enableBlurBehind(winId(), false);
+        KWindowEffects::enableBlurBehind(QWindow::fromWinId(winId()), false);
     else
-        KWindowEffects::enableBlurBehind(winId(), settings->blurBackground());
+        KWindowEffects::enableBlurBehind(QWindow::fromWinId(winId()), settings->blurBackground());
 #endif
 }
 
 void MW::applyFullscreenBackground() {
 #ifdef USE_KDE_BLUR
-    KWindowEffects::enableBlurBehind(winId(), false);
+    KWindowEffects::enableBlurBehind(QWindow::fromWinId(winId()), false);
 #endif
 }
 
