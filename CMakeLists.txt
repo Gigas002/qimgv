@@ -23,6 +23,31 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Usage: cmake -DVIDEO_SUPPORT=ON [...]
 option(EXIV2 "For reading/writing exif tags" ON)
 option(VIDEO_SUPPORT "Enable video support" ON)
+# qimgv root
+cmake_minimum_required(VERSION 3.13)
+project(qimgv
+    VERSION 1.0.2
+    HOMEPAGE_URL "https://github.com/easymodo/qimgv"
+    LANGUAGES CXX)
+
+message(STATUS "Build configuration: " ${CMAKE_BUILD_TYPE})
+
+# check for gcc
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND
+        CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0)
+    message(FATAL_ERROR "\n!!! THIS PROJECT REQUIRES GCC 9.0 OR LATER !!!\n")
+endif()
+
+# AUTOMOC
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+# USER OPTIONS
+# Usage: cmake -DVIDEO_SUPPORT=ON [...]
+option(EXIV2 "For reading/writing exif tags" ON)
+option(VIDEO_SUPPORT "Enable video support" ON)
 option(OPENCV_SUPPORT "Enable HQ scaling via OpenCV" ON)
 option(KDE_SUPPORT "Support blur when using KDE" OFF)
 if(UNIX AND NOT APPLE)
@@ -33,20 +58,26 @@ if(UNIX AND NOT APPLE)
     endif()
 endif()
 
+option(FORCE_QT6 "Force qt6 build" OFF)
+
 # FIND PACKAGES
+
+if(FORCE_QT6)
+    find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Widgets Svg PrintSupport OpenGLWidgets)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Svg PrintSupport OpenGLWidgets)
+else()
     find_package(Qt5 COMPONENTS Widgets QUIET)
     if(Qt5_FOUND)
         find_package(QT NAMES Qt5 REQUIRED COMPONENTS Core Widgets Svg PrintSupport)
     else()
         find_package(QT NAMES Qt6 REQUIRED COMPONENTS Core Widgets Svg PrintSupport OpenGLWidgets)
     endif()
-
-message(STATUS "Qt Version: " ${QT_VERSION})
     if(QT_VERSION_MAJOR GREATER_EQUAL 6)
         find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Widgets Svg PrintSupport OpenGLWidgets)
     else()
         find_package(Qt${QT_VERSION_MAJOR} 5.12 REQUIRED COMPONENTS Core Widgets Svg PrintSupport)
     endif()
+endif()
 
 if(EXIV2)
     find_package(PkgConfig REQUIRED)
