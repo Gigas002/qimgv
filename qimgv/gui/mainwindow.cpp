@@ -466,7 +466,14 @@ void MW::mouseReleaseEvent(QMouseEvent *event) {
 
 void MW::mouseDoubleClickEvent(QMouseEvent *event) {
     event->accept();
-    QMouseEvent *fakePressEvent = new QMouseEvent(QEvent::MouseButtonPress, event->pos(), event->button(), event->buttons(), event->modifiers());
+    QMouseEvent *fakePressEvent = new QMouseEvent(
+        QEvent::MouseButtonPress,
+        event->position(),
+        event->globalPosition(),
+        event->button(),
+        event->buttons(),
+        event->modifiers()
+    );
     actionManager->processEvent(fakePressEvent);
     actionManager->processEvent(event);
 }
@@ -920,15 +927,15 @@ void MW::readSettings() {
 void MW::applyWindowedBackground() {
 #ifdef USE_KDE_BLUR
     if(settings->backgroundOpacity() == 1.0)
-        KWindowEffects::enableBlurBehind(QWindow::fromWinId(winId()), false);
+        KWindowEffects::enableBlurBehind(windowHandle(), false);
     else
-        KWindowEffects::enableBlurBehind(QWindow::fromWinId(winId()), settings->blurBackground());
+        KWindowEffects::enableBlurBehind(windowHandle(), settings->blurBackground());
 #endif
 }
 
 void MW::applyFullscreenBackground() {
 #ifdef USE_KDE_BLUR
-    KWindowEffects::enableBlurBehind(QWindow::fromWinId(winId()), false);
+    KWindowEffects::enableBlurBehind(windowHandle(), false);
 #endif
 }
 
